@@ -58,11 +58,11 @@ namespace SheetsQuickstart
                 //}
 
                 String spreadsheetId2 = "1wcXSo-0LVGaNowKnc-geEC81TPEzpBHpS3odPP1X4qg";
-                String range2 = "List2!F5";  // update cell F5 
+                String range2 = "List2!A1"; 
                 ValueRange valueRange = new ValueRange();
                 valueRange.MajorDimension = "COLUMNS";//"ROWS";//COLUMNS
 
-                var oblist = new List<object>() { "My Cell Text" };
+                var oblist = new List<object>() { "My Cell Text", 89372875567, 3242352355,2365262346 };
                 valueRange.Values = new List<IList<object>> { oblist };
 
                 SpreadsheetsResource.ValuesResource.UpdateRequest update = service.Spreadsheets.Values.Update(valueRange, spreadsheetId2, range2);
