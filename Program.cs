@@ -10,25 +10,19 @@ using System.Threading;
 
 namespace SheetsQuickstart
 {
-    // Class to demonstrate the use of Sheets list values API
     class Program
     {
-        /* Global instance of the scopes required by this quickstart.
-         If modifying these scopes, delete your previously saved token.json/ folder. */
-        static string[] Scopes = { SheetsService.Scope.SpreadsheetsReadonly };
-        static string ApplicationName = "Google Sheets API .NET Quickstart";
+        static string[] Scopes = { SheetsService.Scope.Spreadsheets };
+        static string ApplicationName = "GoogleSheetsWeeklyReporter";
 
         static void Main(string[] args)
         {
             try
             {
                 UserCredential credential;
-                // Load client secrets.
-                using (var stream =
-                       new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
+                
+                using (var stream = new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
                 {
-                    /* The file token.json stores the user's access and refresh tokens, and is created
-                     automatically when the authorization flow completes for the first time. */
                     string credPath = "token.json";
                     credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                         GoogleClientSecrets.FromStream(stream).Secrets,
@@ -39,38 +33,45 @@ namespace SheetsQuickstart
                     Console.WriteLine("Credential file saved to: " + credPath);
                 }
 
-                // Create Google Sheets API service.
                 var service = new SheetsService(new BaseClientService.Initializer
                 {
                     HttpClientInitializer = credential,
                     ApplicationName = ApplicationName
                 });
 
-                // Define request parameters.
-                String spreadsheetId = "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms";
-                String range = "Class Data!A2:E";
-                SpreadsheetsResource.ValuesResource.GetRequest request =
-                    service.Spreadsheets.Values.Get(spreadsheetId, range);
+                //String spreadsheetId = "1wcXSo-0LVGaNowKnc-geEC81TPEzpBHpS3odPP1X4qg";
+                //String range1 = "List!A2:C";
+                //SpreadsheetsResource.ValuesResource.GetRequest request =
+                //    service.Spreadsheets.Values.Get(spreadsheetId, range1);
 
-                // Prints the names and majors of students in a sample spreadsheet:
-                // https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
-                ValueRange response = request.Execute();
-                IList<IList<Object>> values = response.Values;
-                if (values == null || values.Count == 0)
-                {
-                    Console.WriteLine("No data found.");
-                    return;
-                }
-                Console.WriteLine("Name, Major");
-                foreach (var row in values)
-                {
-                    // Print columns A and E, which correspond to indices 0 and 4.
-                    Console.WriteLine("{0}, {1}", row[0], row[4]);
-                }
+                //ValueRange response = request.Execute();
+                //IList<IList<Object>> values = response.Values;
+                //if (values == null || values.Count == 0)
+                //{
+                //    Console.WriteLine("No data found.");
+                //    return;
+                //}
+                //Console.WriteLine("Name, Major");
+                //foreach (var row in values)
+                //{
+                //    Console.WriteLine("{0}, {1}", row[1], row[2]);
+                //}
+
+                String spreadsheetId2 = "1wcXSo-0LVGaNowKnc-geEC81TPEzpBHpS3odPP1X4qg";
+                String range2 = "List2!F5";  // update cell F5 
+                ValueRange valueRange = new ValueRange();
+                valueRange.MajorDimension = "COLUMNS";//"ROWS";//COLUMNS
+
+                var oblist = new List<object>() { "My Cell Text" };
+                valueRange.Values = new List<IList<object>> { oblist };
+
+                SpreadsheetsResource.ValuesResource.UpdateRequest update = service.Spreadsheets.Values.Update(valueRange, spreadsheetId2, range2);
+                update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
+                UpdateValuesResponse result2 = update.Execute();
+
+                Console.WriteLine("done!");
             }
-            catch (FileNotFoundException e)
-            {
-                Console.WriteLine(e.Message);
+            catch (FileNotFoundException ex) { Console.WriteLine(ex.Message);
             }
         }
     }
